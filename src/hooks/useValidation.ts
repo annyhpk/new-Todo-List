@@ -10,19 +10,19 @@ const validation = {
 };
 
 const useValidation = (type: validationType): ReturnTypes => {
-  const [check, setCheck] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
   const reg = validation[type];
 
   const onChangeValidation = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    if (value.match(reg)) {
-      setCheck(true);
+    if (reg.test(value)) {
+      setIsValid(true);
       return;
     }
-    setCheck(false);
+    setIsValid(false);
   }, []);
 
-  return [check, onChangeValidation];
+  return [isValid, onChangeValidation];
 };
 
 export default useValidation;
