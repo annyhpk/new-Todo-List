@@ -1,5 +1,5 @@
-import Axios from 'axios';
 import { useCallback, useState, ChangeEvent, Dispatch, SetStateAction, useRef, memo } from 'react';
+import HttpClient from '../../service/httpClient';
 
 import { UpdateButton, DeleteButton, UpdateInput, Wrapper, Title, Content } from './styled';
 
@@ -24,6 +24,7 @@ function Todo({ setTodos, id, title, content, createdAt, updatedAt }: Props) {
   const [modifyInput, setModifyInput] = useState<TodoInputType>({ title, content });
   const [modifyMode, setModifyMode] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const httpClient = new HttpClient();
 
   const onChangeTitle = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setModifyInput((prev) => {
@@ -43,17 +44,18 @@ function Todo({ setTodos, id, title, content, createdAt, updatedAt }: Props) {
       return;
     }
     const form = new FormData(formRef.current);
-    const TodoData = {
-      title: form.get('title'),
-      content: form.get('content'),
+    const TodoForm = {
+      title: form.get('title') as string,
+      content: form.get('content') as string,
     };
-    console.log(TodoData);
+
     try {
-      await Axios.put(`http://localhost:8080/todos/${id}`, TodoData, {
-        headers: {
-          Authorization: localStorage.getItem('token'),
-        },
-      });
+      const res = await httpClient.updateTodo(id, TodoForm);
+      setModifyInput((prev) => ({
+        ...prev,
+        title: res.data.data.title,
+        content: res.data.data.content,
+      }));
     } catch (err: any) {
       throw new Error(err);
     }
@@ -61,11 +63,7 @@ function Todo({ setTodos, id, title, content, createdAt, updatedAt }: Props) {
 
   const onClickDelete = useCallback(async () => {
     try {
-      await Axios.delete(`http://localhost:8080/todos/${id}`, {
-        headers: {
-          Authorization: localStorage.getItem('token'),
-        },
-      });
+      await httpClient.deleteTodo(id);
       setTodos((prev) => [...prev.filter((todo) => todo.id !== id)]);
     } catch (err: any) {
       throw new Error(err);

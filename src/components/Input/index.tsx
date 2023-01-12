@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import useInput from '../../hooks/useInput';
 import { StyledInput } from './styled';
 

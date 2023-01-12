@@ -1,15 +1,17 @@
-import { useContext } from 'react';
+import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import LoginContext from '../../contexts/Login';
+import useLoginContext from '../../contexts/Login';
+import tokenStorage from '../../utils/tokenStorage';
 
+// style
 import { Nav, Button } from './styled';
 
 function GlobalNavBar() {
-  const { logined } = useContext(LoginContext);
+  const { isLogin, actions } = useLoginContext();
 
   const onClickLogout = () => {
-    localStorage.clear();
-    location.reload();
+    tokenStorage.clearToken();
+    actions.logout();
   };
 
   return (
@@ -17,7 +19,7 @@ function GlobalNavBar() {
       <NavLink to="/">
         <p>Home</p>
       </NavLink>
-      {logined ? (
+      {isLogin ? (
         <>
           <NavLink to="/todo">
             <p>Todo</p>

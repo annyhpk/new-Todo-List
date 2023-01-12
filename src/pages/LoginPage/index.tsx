@@ -1,34 +1,38 @@
-import Axios from 'axios';
-import { FormEvent, useCallback, useEffect, useContext } from 'react';
+import { FormEvent, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Form from '../../components/Form';
 import Input from '../../components/ValidationInput';
-import LoginContext from '../../contexts/Login';
+import useLoginContext from '../../contexts/Login';
+import HttpClient from '../../service/httpClient';
+import tokenStorage from '../../utils/tokenStorage';
+
+// style
 import { StyledLink } from './styled';
 
 function LoginPage() {
-  const { setLogined } = useContext(LoginContext);
+  const { actions } = useLoginContext();
   const navigate = useNavigate();
+  const httpClient = new HttpClient();
 
   useEffect(() => {
-    if (localStorage.getItem('token')) navigate('/todo');
+    if (tokenStorage.getToken()) navigate('/');
   }, []);
 
   const onSubmitForm = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    const loginData = {
-      email: form.get('email'),
-      password: form.get('password'),
+    const loginForm = {
+      email: form.get('email') as string,
+      password: form.get('password') as string,
     };
+
     try {
-      const token = await Axios.post('http://localhost:8080/users/login', loginData);
-      localStorage.setItem('token', token.data.token);
-      setLogined(true);
+      const res = await httpClient.login(loginForm);
+      tokenStorage.setToken(res.data.token);
+      actions.login();
       navigate('/');
-    } catch (err: any) {
-      alert('아이디 또는 암호가 올바르지 않습니다.');
-      throw new Error(err);
+    } catch (error) {
+      throw new Error(`${error}`);
     }
   }, []);
 

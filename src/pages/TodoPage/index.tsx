@@ -1,29 +1,28 @@
-import Axios from 'axios';
 import { useCallback, useEffect, useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Todo, { TodoType } from '../../components/Todo';
 import TextArea from '../../components/TextArea';
 import Input from '../../components/Input';
+import HttpClient from '../../service/httpClient';
+import tokenStorage from '../../utils/tokenStorage';
 
+// style
 import { TodoContainer, TodoBox, TodoForm } from './styled';
 
 function TodoPage() {
   const navigate = useNavigate();
   const [todos, setTodos] = useState<TodoType[]>([]);
+  const httpClient = new HttpClient();
 
   const onSubmitTodo = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const TodoData = {
-      title: form.get('title'),
-      content: form.get('content'),
+    const TodoForm = {
+      title: form.get('title') as string,
+      content: form.get('content') as string,
     };
     try {
-      const res = await Axios.post('http://localhost:8080/todos', TodoData, {
-        headers: {
-          Authorization: localStorage.getItem('token'),
-        },
-      });
+      const res = await httpClient.createTodo(TodoForm);
       setTodos((prev) => [...prev, res.data.data]);
     } catch (err: any) {
       throw new Error(err);
@@ -31,15 +30,12 @@ function TodoPage() {
   }, []);
 
   useEffect(() => {
-    if (!localStorage.getItem('token')) navigate('/');
+    if (!tokenStorage.getToken()) navigate('/');
   }, []);
 
   useEffect(() => {
-    Axios.get('http://localhost:8080/todos', {
-      headers: {
-        Authorization: localStorage.getItem('token'),
-      },
-    })
+    httpClient
+      .getTodos()
       .then((res) => {
         const Data: TodoType[] = res.data.data;
         setTodos(Data);
