@@ -8,3 +8,9 @@ export const StyledLink = styled(Link)`
   font-size: 0.75rem;
   line-height: 1rem;
 `;
+
+export const Label = styled.label`
+  font-size: 0.75em;
+  line-height: 1em;
+  color: lightgray;
+`;
