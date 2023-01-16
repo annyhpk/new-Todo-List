@@ -1,4 +1,11 @@
-import { createContext, ReactNode, useState, useEffect, useMemo, useContext } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useState,
+  useEffect,
+  useMemo,
+  useContext,
+} from 'react';
 import tokenStorage from '../../utils/tokenStorage';
 
 const initialState = {
@@ -21,7 +28,7 @@ export type ContextType = {
 };
 
 export function LoginContextProvider({ children }: Props) {
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [isLogin, setIsLogin] = useState(false);
   const [userToken, setUserToken] = useState<string | null>(null);
   const actions = useMemo(
     () => ({
@@ -41,7 +48,9 @@ export function LoginContextProvider({ children }: Props) {
     userToken !== null ? actions.login() : actions.logout();
   }, [userToken, isLogin, setIsLogin]);
 
-  return <LoginContext.Provider value={value}>{children}</LoginContext.Provider>;
+  return (
+    <LoginContext.Provider value={value}>{children}</LoginContext.Provider>
+  );
 }
 
 export default function useLoginContext() {

@@ -1,14 +1,29 @@
-import { useCallback, useState, ChangeEvent, Dispatch, SetStateAction, useRef, memo } from 'react';
+import {
+  useCallback,
+  useState,
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useRef,
+  memo,
+} from 'react';
 import HttpClient from '../../service/httpClient';
 
-import { UpdateButton, DeleteButton, UpdateInput, Wrapper, Title, Content } from './styled';
+import {
+  UpdateButton,
+  DeleteButton,
+  UpdateInput,
+  Wrapper,
+  Title,
+  Content,
+} from './styled';
 
 export type TodoType = {
   id: string;
   title: string;
   content: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 type Props = TodoType & {
@@ -20,9 +35,12 @@ type TodoInputType = {
   content: string;
 };
 
-function Todo({ setTodos, id, title, content, createdAt, updatedAt }: Props) {
-  const [modifyInput, setModifyInput] = useState<TodoInputType>({ title, content });
-  const [modifyMode, setModifyMode] = useState<boolean>(false);
+function Todo({ setTodos, id, title, content }: Props) {
+  const [modifyInput, setModifyInput] = useState<TodoInputType>({
+    title,
+    content,
+  });
+  const [modifyMode, setModifyMode] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const httpClient = new HttpClient();
 
@@ -32,11 +50,14 @@ function Todo({ setTodos, id, title, content, createdAt, updatedAt }: Props) {
     });
   }, []);
 
-  const onChangeContent = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setModifyInput((prev) => {
-      return { ...prev, content: event.target.value };
-    });
-  }, []);
+  const onChangeContent = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setModifyInput((prev) => {
+        return { ...prev, content: event.target.value };
+      });
+    },
+    []
+  );
 
   const onClickUpdate = useCallback(async () => {
     setModifyMode((prev) => !prev);

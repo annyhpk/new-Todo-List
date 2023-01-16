@@ -9,7 +9,7 @@ type Props = {
 };
 
 function Form({ children, onSubmitForm, title, submitButton }: Props) {
-  const [check, setCheck] = useState<Boolean>(false);
+  const [check, setCheck] = useState(false);
 
   const onChangeForm = useCallback((e: FormEvent<HTMLFormElement>) => {
     const form = new FormData(e.currentTarget);
