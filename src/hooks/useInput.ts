@@ -20,12 +20,10 @@ function useInput<T>(
     []
   );
 
-  const isValidInput = useMemo(() => {
-    if (validType) {
-      return Validation(validType, String(value));
-    }
-    return true;
-  }, [validType, value]);
+  const isValidInput = useMemo(
+    () => Validation(validType, String(value)),
+    [validType, value]
+  );
 
   return [value, onChange, isValidInput];
 }

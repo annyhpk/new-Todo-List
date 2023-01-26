@@ -7,7 +7,11 @@ const validation = {
   password: new RegExp('^.{8,}$'),
 };
 
-const Validation = (type: validationType, value: string): boolean => {
+const Validation = (
+  type: validationType | undefined,
+  value: string
+): boolean => {
+  if (type === undefined) return true;
   const reg = validation[type];
   return reg.test(value);
 };
