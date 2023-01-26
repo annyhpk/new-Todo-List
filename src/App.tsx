@@ -1,8 +1,8 @@
-import { Suspense, lazy } from 'react';
+import { lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 // main
-import Loading from './components/Loading';
+import PrivateRoute from './components/PrivateRoute';
 import MainPage from './pages/MainPage';
 import GlobalNavBar from './components/GlobalNavBar';
 
@@ -13,15 +13,17 @@ const TodoPage = lazy(() => import('./pages/TodoPage'));
 
 function App() {
   return (
-    <Suspense fallback={<Loading />}>
+    <>
       <GlobalNavBar />
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/todo" element={<TodoPage />} />
+        <Route path="/todo" element={<PrivateRoute />}>
+          <Route path="/todo" element={<TodoPage />} />
+        </Route>
       </Routes>
-    </Suspense>
+    </>
   );
 }
 
