@@ -7,8 +7,11 @@ import {
   useRef,
   memo,
 } from 'react';
-import HttpClient from '../../service/httpClient';
 
+// API
+import TodoAPI from '../../service/Todo';
+
+// style
 import {
   UpdateButton,
   DeleteButton,
@@ -42,7 +45,6 @@ function Todo({ setTodos, id, title, content }: Props) {
   });
   const [modifyMode, setModifyMode] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const httpClient = new HttpClient();
 
   const onChangeTitle = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setModifyInput((prev) => {
@@ -71,7 +73,7 @@ function Todo({ setTodos, id, title, content }: Props) {
     };
 
     try {
-      const res = await httpClient.updateTodo(id, TodoForm);
+      const res = await TodoAPI.updateTodo(id, TodoForm);
       setModifyInput((prev) => ({
         ...prev,
         title: res.data.data.title,
@@ -84,7 +86,7 @@ function Todo({ setTodos, id, title, content }: Props) {
 
   const onClickDelete = useCallback(async () => {
     try {
-      await httpClient.deleteTodo(id);
+      await TodoAPI.deleteTodo(id);
       setTodos((prev) => [...prev.filter((todo) => todo.id !== id)]);
     } catch (err: any) {
       throw new Error(err);

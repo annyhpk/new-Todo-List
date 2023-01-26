@@ -5,8 +5,10 @@ import Form from '../../components/Form';
 import Input from '../../components/Input';
 
 import useAuthContext from '../../contexts/Auth';
-import HttpClient from '../../service/httpClient';
 import tokenStorage from '../../utils/tokenStorage';
+
+// API
+import UserAPI from '../../service/User';
 
 // style
 import { StyledLink, Label } from './styled';
@@ -14,7 +16,6 @@ import { StyledLink, Label } from './styled';
 function LoginPage() {
   const { isAuthenticated, actions } = useAuthContext();
   const navigate = useNavigate();
-  const httpClient = new HttpClient();
 
   useEffect(() => {
     if (isAuthenticated) navigate('/');
@@ -29,7 +30,7 @@ function LoginPage() {
     };
 
     try {
-      const res = await httpClient.login(loginForm);
+      const res = await UserAPI.login(loginForm);
       tokenStorage.setToken(res.data.token);
       actions.login();
       navigate('/');

@@ -5,15 +5,17 @@ import Form from '../../components/Form';
 import Input from '../../components/Input';
 
 import useAuthContext from '../../contexts/Auth';
-import HttpClient from '../../service/httpClient';
 import tokenStorage from '../../utils/tokenStorage';
 
+// API
+import UserAPI from '../../service/User';
+
+// style
 import { Label } from '../LoginPage/styled';
 
 function SignUpPage() {
   const { isAuthenticated, actions } = useAuthContext();
   const navigate = useNavigate();
-  const httpClient = new HttpClient();
 
   useEffect(() => {
     if (isAuthenticated) navigate('/');
@@ -28,7 +30,7 @@ function SignUpPage() {
     };
 
     try {
-      const res = await httpClient.signup(signupForm);
+      const res = await UserAPI.signup(signupForm);
       tokenStorage.setToken(res.data.token);
       actions.login();
       navigate('/');

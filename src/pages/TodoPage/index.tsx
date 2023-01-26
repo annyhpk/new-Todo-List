@@ -4,14 +4,14 @@ import Todo, { TodoType } from '../../components/Todo';
 import TextArea from '../../components/TextArea';
 import Input from '../../components/Input';
 
-import HttpClient from '../../service/httpClient';
+// API
+import TodoAPI from '../../service/Todo';
 
 // style
 import { TodoContainer, TodoBox, TodoForm } from './styled';
 
 function TodoPage() {
   const [todos, setTodos] = useState<TodoType[]>([]);
-  const httpClient = new HttpClient();
 
   const onSubmitTodo = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
@@ -22,7 +22,7 @@ function TodoPage() {
         content: form.get('content') as string,
       };
       try {
-        const res = await httpClient.createTodo(TodoForm);
+        const res = await TodoAPI.createTodo(TodoForm);
         setTodos((prev) => [...prev, res.data.data]);
       } catch (err: any) {
         throw new Error(err);
@@ -32,7 +32,7 @@ function TodoPage() {
   );
 
   useEffect(() => {
-    httpClient
+    TodoAPI
       .getTodos()
       .then((res) => {
         const Data: TodoType[] = res.data.data;
