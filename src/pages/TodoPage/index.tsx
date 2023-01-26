@@ -1,37 +1,35 @@
 import { useCallback, useEffect, useState, FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import Todo, { TodoType } from '../../components/Todo';
 import TextArea from '../../components/TextArea';
 import Input from '../../components/Input';
+
 import HttpClient from '../../service/httpClient';
-import tokenStorage from '../../utils/tokenStorage';
 
 // style
 import { TodoContainer, TodoBox, TodoForm } from './styled';
 
 function TodoPage() {
-  const navigate = useNavigate();
   const [todos, setTodos] = useState<TodoType[]>([]);
   const httpClient = new HttpClient();
 
-  const onSubmitTodo = useCallback(async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const TodoForm = {
-      title: form.get('title') as string,
-      content: form.get('content') as string,
-    };
-    try {
-      const res = await httpClient.createTodo(TodoForm);
-      setTodos((prev) => [...prev, res.data.data]);
-    } catch (err: any) {
-      throw new Error(err);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!tokenStorage.getToken()) navigate('/');
-  }, []);
+  const onSubmitTodo = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      const TodoForm = {
+        title: form.get('title') as string,
+        content: form.get('content') as string,
+      };
+      try {
+        const res = await httpClient.createTodo(TodoForm);
+        setTodos((prev) => [...prev, res.data.data]);
+      } catch (err: any) {
+        throw new Error(err);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     httpClient
