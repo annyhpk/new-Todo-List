@@ -1,19 +1,23 @@
 import { useCallback, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import Form from '../../components/Form';
-import Input from '../../components/ValidationInput';
-import useLoginContext from '../../contexts/Login';
+import Input from '../../components/Input';
+
+import useAuthContext from '../../contexts/Auth';
 import HttpClient from '../../service/httpClient';
 import tokenStorage from '../../utils/tokenStorage';
 
+import { Label } from '../LoginPage/styled';
+
 function SignUpPage() {
-  const { actions } = useLoginContext();
+  const { isAuthenticated, actions } = useAuthContext();
   const navigate = useNavigate();
   const httpClient = new HttpClient();
 
   useEffect(() => {
-    if (tokenStorage.getToken()) navigate('/');
-  }, []);
+    if (isAuthenticated) navigate('/');
+  }, [isAuthenticated]);
 
   const onSubmitForm = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,18 +39,24 @@ function SignUpPage() {
 
   return (
     <main>
-      <Form title="회원가입" submitButton="가입하기" onSubmitForm={onSubmitForm}>
+      <Form
+        title="회원가입"
+        submitButton="가입하기"
+        onSubmitForm={onSubmitForm}
+      >
+        <Label htmlFor="email">아이디(email)</Label>
         <Input
           name="email"
           type="email"
-          label="아이디(email)"
+          validationType="email"
           placeholder="아이디(이메일)"
           msg="'@'과 '.'을 모두 포함"
         />
+        <Label htmlFor="password">패스워드(password)</Label>
         <Input
           name="password"
           type="password"
-          label="패스워드(password)"
+          validationType="password"
           placeholder="********"
           msg="8자리 이상"
         />

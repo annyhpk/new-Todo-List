@@ -21,7 +21,10 @@ function Input({
   height = '1.2rem',
   msg,
 }: Props) {
-  const [value, onChangeValue, isValid] = useInput<string>('', validationType);
+  const [value, onChangeValue, isValidInput] = useInput<string>(
+    '',
+    validationType
+  );
 
   return (
     <>
@@ -35,7 +38,7 @@ function Input({
         placeholder={placeholder}
         autoComplete="off"
       />
-      {!isValid ? <ValidationAlert>{msg}</ValidationAlert> : null}
+      {isValidInput ? null : <ValidationAlert>{msg}</ValidationAlert>}
     </>
   );
 }

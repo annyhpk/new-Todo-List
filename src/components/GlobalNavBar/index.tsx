@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import useLoginContext from '../../contexts/Login';
+import useAuthContext from '../../contexts/Auth';
 import tokenStorage from '../../utils/tokenStorage';
 
 // style
 import { Nav, Button } from './styled';
 
 function GlobalNavBar() {
-  const { isLogin, actions } = useLoginContext();
+  const { isAuthenticated, actions } = useAuthContext();
 
   const onClickLogout = () => {
     tokenStorage.clearToken();
@@ -18,7 +18,7 @@ function GlobalNavBar() {
       <NavLink to="/">
         <p>Home</p>
       </NavLink>
-      {isLogin ? (
+      {isAuthenticated ? (
         <>
           <NavLink to="/todo">
             <p>Todo</p>
