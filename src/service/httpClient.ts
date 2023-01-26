@@ -1,6 +1,6 @@
 import Axios, { AxiosInstance, AxiosResponse } from 'axios';
-import tokenStorage from '../utils/tokenStorage';
 import { SERVER_URL } from '../constants';
+import tokenStorage from '../utils/tokenStorage';
 
 export type LoginForm = {
   email: string;
@@ -19,16 +19,15 @@ export type TodoForm = {
 
 export default class HttpClient {
   static instance: HttpClient;
-  readonly api: AxiosInstance = Axios.create({
+  private readonly api: AxiosInstance = Axios.create({
     baseURL: SERVER_URL,
-    headers: {
-      Authorization: tokenStorage.getToken(),
-    },
   });
+
   constructor() {
     if (HttpClient.instance) {
       return HttpClient.instance;
     }
+    this.api.defaults.headers.common['Authorization'] = tokenStorage.getToken();
     HttpClient.instance = this;
   }
 
