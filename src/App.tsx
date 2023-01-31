@@ -1,10 +1,11 @@
 import { lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 // main
-import PrivateRoute from './components/PrivateRoute';
-import MainPage from './pages/MainPage';
 import GlobalNavBar from './components/GlobalNavBar';
+import PrivateRoute from './components/PrivateRoute';
+import PublicRoute from './components/PublicRoute';
+import MainPage from './pages/MainPage';
 
 // lazy loading
 const LoginPage = lazy(() => import('./pages/LoginPage'));
@@ -17,11 +18,30 @@ function App() {
       <GlobalNavBar />
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/todo" element={<PrivateRoute />}>
-          <Route path="/todo" element={<TodoPage />} />
-        </Route>
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignUpPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/todo"
+          element={
+            <PrivateRoute>
+              <TodoPage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </>
   );
