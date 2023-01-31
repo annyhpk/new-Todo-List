@@ -1,27 +1,20 @@
-import {
-  useCallback,
-  useState,
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useRef,
-  memo,
-} from 'react';
+import { ChangeEvent, memo, useCallback, useRef, useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 
 // API
 import TodoAPI from '../../service/Todo';
 
 // style
 import {
-  UpdateButton,
+  Content,
   DeleteButton,
+  Title,
+  UpdateButton,
   UpdateInput,
   Wrapper,
-  Title,
-  Content,
 } from './styled';
 
-export type TodoType = {
+export type Props = {
   id: string;
   title: string;
   content: string;
@@ -29,22 +22,29 @@ export type TodoType = {
   updatedAt?: string;
 };
 
-type Props = TodoType & {
-  setTodos: Dispatch<SetStateAction<TodoType[]>>;
-};
-
 type TodoInputType = {
   title: string;
   content: string;
 };
 
-function Todo({ setTodos, id, title, content }: Props) {
+function Todo({ id, title, content }: Props) {
+  const queryClient = useQueryClient();
+  const formRef = useRef<HTMLFormElement>(null);
   const [modifyInput, setModifyInput] = useState<TodoInputType>({
     title,
     content,
   });
-  const [modifyMode, setModifyMode] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
+  const [modifyToggle, setModifyToggle] = useState(false);
+  const updateMutation = useMutation(TodoAPI.updateTodo, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['todos']);
+    },
+  });
+  const deleteMutation = useMutation(TodoAPI.deleteTodo, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['todos']);
+    },
+  });
 
   const onChangeTitle = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setModifyInput((prev) => {
@@ -62,40 +62,27 @@ function Todo({ setTodos, id, title, content }: Props) {
   );
 
   const onClickUpdate = useCallback(async () => {
-    setModifyMode((prev) => !prev);
-    if (!modifyMode || !formRef.current) {
+    setModifyToggle((prev) => !prev);
+    if (!modifyToggle || !formRef.current) {
       return;
     }
+
     const form = new FormData(formRef.current);
-    const TodoForm = {
+    const todoPayload = {
       title: form.get('title') as string,
       content: form.get('content') as string,
     };
 
-    try {
-      const res = await TodoAPI.updateTodo(id, TodoForm);
-      setModifyInput((prev) => ({
-        ...prev,
-        title: res.data.data.title,
-        content: res.data.data.content,
-      }));
-    } catch (err: any) {
-      throw new Error(err);
-    }
-  }, [modifyMode, modifyInput]);
+    updateMutation.mutate({ id, todoPayload });
+  }, [modifyToggle, modifyInput]);
 
   const onClickDelete = useCallback(async () => {
-    try {
-      await TodoAPI.deleteTodo(id);
-      setTodos((prev) => [...prev.filter((todo) => todo.id !== id)]);
-    } catch (err: any) {
-      throw new Error(err);
-    }
+    deleteMutation.mutate(id);
   }, []);
 
   return (
     <Wrapper>
-      {modifyMode ? (
+      {modifyToggle ? (
         <form ref={formRef}>
           <UpdateInput
             name="title"
@@ -118,7 +105,7 @@ function Todo({ setTodos, id, title, content }: Props) {
       )}
       <div>
         <UpdateButton type="button" onClick={onClickUpdate}>
-          {modifyMode ? '✅' : '⚙️'}
+          {modifyToggle ? '✅' : '⚙️'}
         </UpdateButton>
         <DeleteButton type="button" onClick={onClickDelete}>
           🗑️

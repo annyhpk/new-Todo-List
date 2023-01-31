@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState, FormEvent } from 'react';
+import { useCallback, FormEvent } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-import Todo, { TodoType } from '../../components/Todo';
+import Todo, { Props } from '../../components/Todo';
 import TextArea from '../../components/TextArea';
 import Input from '../../components/Input';
 
@@ -11,37 +12,27 @@ import TodoAPI from '../../service/Todo';
 import { TodoContainer, TodoBox, TodoForm } from './styled';
 
 function TodoPage() {
-  const [todos, setTodos] = useState<TodoType[]>([]);
+  const queryClient = useQueryClient();
+  const { isLoading, data } = useQuery(['todos'], TodoAPI.getTodos, {
+    suspense: true,
+  });
+  const mutation = useMutation(TodoAPI.createTodo, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['todos']);
+    },
+  });
 
   const onSubmitTodo = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
-      const TodoForm = {
+      mutation.mutate({
         title: form.get('title') as string,
         content: form.get('content') as string,
-      };
-      try {
-        const res = await TodoAPI.createTodo(TodoForm);
-        setTodos((prev) => [...prev, res.data.data]);
-      } catch (err: any) {
-        throw new Error(err);
-      }
+      });
     },
     []
   );
-
-  useEffect(() => {
-    TodoAPI
-      .getTodos()
-      .then((res) => {
-        const Data: TodoType[] = res.data.data;
-        setTodos(Data);
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
-  }, []);
 
   return (
     <main>
@@ -54,15 +45,17 @@ function TodoPage() {
         </TodoForm>
         <h3>할 일 목록</h3>
         <TodoBox>
-          {todos.length ? (
-            todos.map((todoInfo) => (
-              <div key={todoInfo.id}>
-                <Todo setTodos={setTodos} {...todoInfo} />
-                <hr />
-              </div>
-            ))
+          {isLoading ? (
+            <p>로딩중...</p>
           ) : (
-            <p>작성된 항목이 없습니다.</p>
+            data
+              .map((todoInfo: Props) => (
+                <div key={todoInfo.id}>
+                  <Todo {...todoInfo} />
+                  <hr />
+                </div>
+              ))
+              .reverse()
           )}
         </TodoBox>
       </TodoContainer>
