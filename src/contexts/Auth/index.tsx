@@ -28,9 +28,11 @@ export type ContextType = {
 };
 
 export function AuthContextProvider({ children }: Props) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userToken, setUserToken] = useState<string | null>(
     tokenStorage.getToken()
+  );
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    userToken ? true : false
   );
   const actions = useMemo(
     () => ({
