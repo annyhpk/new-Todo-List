@@ -1,6 +1,6 @@
 import api from '../api';
 
-export type TodoForm = {
+export type TodoPayload = {
   title: string;
   content: string;
 };
@@ -8,23 +8,30 @@ export type TodoForm = {
 export default class TodoAPI {
   static async getTodos() {
     try {
-      return await api.get('/todos');
+      const res = await api.get('/todos');
+      return res?.data?.data;
     } catch (error) {
       throw new Error(`Getting todos failed: ${error}`);
     }
   }
 
-  static async createTodo(todoForm: TodoForm) {
+  static async createTodo(todoPayload: TodoPayload) {
     try {
-      return await api.post('/todos', todoForm);
+      return await api.post('/todos', todoPayload);
     } catch (error) {
       throw new Error(`create todo failed: ${error}`);
     }
   }
 
-  static async updateTodo(id: string, todoForm: TodoForm) {
+  static async updateTodo({
+    id,
+    todoPayload,
+  }: {
+    id: string;
+    todoPayload: TodoPayload;
+  }) {
     try {
-      return await api.put(`/todos/${id}`, todoForm);
+      return await api.put(`/todos/${id}`, todoPayload);
     } catch (error) {
       throw new Error(`Update todo failed: ${error}`);
     }
