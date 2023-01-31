@@ -1,4 +1,4 @@
-import axios, { AxiosHeaders, AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { SERVER_URL } from '../constants';
 import tokenStorage from '../utils/tokenStorage';
 
@@ -12,7 +12,7 @@ instance.interceptors.request.use(
     if (!!tokenStorage.getToken()) {
       request.headers = {
         Authorization: `Bearer ${tokenStorage.getToken()}`,
-        Accept: `application/json`,
+        Accept: 'application/json',
       };
     }
     return request;
@@ -25,9 +25,6 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response) {
       switch (error.response.status) {
-        case 400:
-          alert('아이디 또는 비밀번호를 확인해주세요');
-          break;
         case 401:
           tokenStorage.clearToken();
           break;
