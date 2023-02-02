@@ -1,32 +1,26 @@
-import { useCallback, FormEvent } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { FormEvent, useCallback } from 'react';
 
-import Todo, { Props } from '../../components/Todo';
-import TextArea from '../../components/TextArea';
+// component
 import Input from '../../components/Input';
+import TextArea from '../../components/TextArea';
+import Todo, { Props } from '../../components/Todo';
 
-// API
-import TodoAPI from '../../service/Todo';
+// hooks
+import useCreateTodo from '../../hooks/mutations/useCreateTodo';
+import useGetTodos from '../../hooks/queries/useGetTodos';
 
 // style
-import { TodoContainer, TodoBox, TodoForm } from './styled';
+import { TodoBox, TodoContainer, TodoForm } from './styled';
 
 function TodoPage() {
-  const queryClient = useQueryClient();
-  const { isLoading, data } = useQuery(['todos'], TodoAPI.getTodos, {
-    suspense: true,
-  });
-  const mutation = useMutation(TodoAPI.createTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['todos']);
-    },
-  });
+  const { isLoading, data } = useGetTodos();
+  const createMutation = useCreateTodo();
 
   const onSubmitTodo = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
-      mutation.mutate({
+      createMutation.mutate({
         title: form.get('title') as string,
         content: form.get('content') as string,
       });
