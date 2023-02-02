@@ -26,6 +26,7 @@ instance.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
+        case 403:
           tokenStorage.clearToken();
           break;
         case 404:
