@@ -1,14 +1,14 @@
-import { useState, ChangeEvent, useCallback, useMemo } from 'react';
+import { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import Validation, { validationType } from '../utils/validation';
 
-function useInput<T>(
+const useInput = <T>(
   initialValue: T,
   validType?: validationType
 ): [
   T,
   (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void,
   boolean
-] {
+] => {
   const [value, setValue] = useState<T>(initialValue);
 
   const onChange = useCallback(
@@ -26,6 +26,6 @@ function useInput<T>(
   );
 
   return [value, onChange, isValidInput];
-}
+};
 
 export default useInput;
