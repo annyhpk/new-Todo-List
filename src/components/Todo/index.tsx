@@ -1,8 +1,8 @@
-import { ChangeEvent, memo, useCallback, useRef, useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
+import { memo, useCallback, useRef, useState } from 'react';
 
-// API
-import TodoAPI from '../../service/Todo';
+// hooks
+import useDeleteTodo from '../../hooks/mutations/useDeleteTodo';
+import useUpdateTodo from '../../hooks/mutations/useUpdateTodo';
 
 // style
 import {
@@ -22,46 +22,15 @@ export type Props = {
   updatedAt?: string;
 };
 
-type TodoInputType = {
-  title: string;
-  content: string;
-};
-
 function Todo({ id, title, content }: Props) {
-  const queryClient = useQueryClient();
   const formRef = useRef<HTMLFormElement>(null);
-  const [modifyInput, setModifyInput] = useState<TodoInputType>({
-    title,
-    content,
-  });
   const [modifyToggle, setModifyToggle] = useState(false);
-  const updateMutation = useMutation(TodoAPI.updateTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['todos']);
-    },
-  });
-  const deleteMutation = useMutation(TodoAPI.deleteTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['todos']);
-    },
-  });
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const contentInputRef = useRef<HTMLInputElement>(null);
+  const updateMutation = useUpdateTodo();
+  const deleteMutation = useDeleteTodo();
 
-  const onChangeTitle = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setModifyInput((prev) => {
-      return { ...prev, title: event.target.value };
-    });
-  }, []);
-
-  const onChangeContent = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setModifyInput((prev) => {
-        return { ...prev, content: event.target.value };
-      });
-    },
-    []
-  );
-
-  const onClickUpdate = useCallback(async () => {
+  const onClickUpdate = useCallback(() => {
     setModifyToggle((prev) => !prev);
     if (!modifyToggle || !formRef.current) {
       return;
@@ -74,9 +43,9 @@ function Todo({ id, title, content }: Props) {
     };
 
     updateMutation.mutate({ id, todoPayload });
-  }, [modifyToggle, modifyInput]);
+  }, [modifyToggle]);
 
-  const onClickDelete = useCallback(async () => {
+  const onClickDelete = useCallback(() => {
     deleteMutation.mutate(id);
   }, []);
 
@@ -85,22 +54,22 @@ function Todo({ id, title, content }: Props) {
       {modifyToggle ? (
         <form ref={formRef}>
           <UpdateInput
+            ref={titleInputRef}
             name="title"
             type="text"
-            value={modifyInput.title}
-            onChange={onChangeTitle}
+            defaultValue={title}
           />
           <UpdateInput
+            ref={contentInputRef}
             name="content"
             type="text"
-            value={modifyInput.content}
-            onChange={onChangeContent}
+            defaultValue={content}
           />
         </form>
       ) : (
         <div>
-          <Title>{modifyInput.title}</Title>
-          <Content>{modifyInput.content}</Content>
+          <Title>{title}</Title>
+          <Content>{content}</Content>
         </div>
       )}
       <div>
