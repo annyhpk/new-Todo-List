@@ -6,7 +6,7 @@ const useCreateTodo = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation(TodoAPI.createTodo, {
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries(['todos']);
     },
   });
