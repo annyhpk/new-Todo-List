@@ -6,42 +6,45 @@ export type TodoPayload = {
 };
 
 export default class TodoAPI {
-  static async getTodos() {
-    try {
-      const res = await api.get('/todos');
-      return res?.data?.data;
-    } catch (error) {
-      throw new Error(`Getting todos failed: ${error}`);
-    }
+  static getTodos() {
+    return api
+      .get('/todos')
+      .then((response) => response.data?.data)
+      .catch((error) => {
+        throw new Error(`Getting todos failed: ${error}`);
+      });
   }
 
-  static async createTodo(todoPayload: TodoPayload) {
-    try {
-      return await api.post('/todos', todoPayload);
-    } catch (error) {
-      throw new Error(`create todo failed: ${error}`);
-    }
+  static createTodo(todoPayload: TodoPayload) {
+    return api
+      .post('/todos', todoPayload)
+      .then((response) => response.data?.data)
+      .catch((error) => {
+        throw new Error(`Creating todos failed: ${error}`);
+      });
   }
 
-  static async updateTodo({
+  static updateTodo({
     id,
     todoPayload,
   }: {
     id: string;
     todoPayload: TodoPayload;
   }) {
-    try {
-      return await api.put(`/todos/${id}`, todoPayload);
-    } catch (error) {
-      throw new Error(`Update todo failed: ${error}`);
-    }
+    return api
+      .put(`/todos/${id}`, todoPayload)
+      .then((response) => response.data?.data)
+      .catch((error) => {
+        throw new Error(`Updating todos failed: ${error}`);
+      });
   }
 
-  static async deleteTodo(id: string) {
-    try {
-      return await api.delete(`/todos/${id}`);
-    } catch (error) {
-      throw new Error(`Delete todo failed: ${error}`);
-    }
+  static deleteTodo(id: string) {
+    return api
+      .delete(`/todos/${id}`)
+      .then((response) => response.data?.data)
+      .catch((error) => {
+        throw new Error(`Deleting todos failed: ${error}`);
+      });
   }
 }
