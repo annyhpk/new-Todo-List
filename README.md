@@ -1,19 +1,29 @@
-# TODO 2023 
+# TODO 2023
+
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![React Query](https://img.shields.io/badge/-React%20Query-FF4154?style=for-the-badge&logo=react%20query&logoColor=white)
 ![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
 ![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
 
+## :: 데모 페이지
+
+DEMO: https://annyhpk.github.io/new-Todo-List
+
 ## :: 설치
+
 npm을 사용하여 설치
+
 ```bash
 npm install
 ```
+
 프로젝트 실행
+
 ```bash
 npm run dev
 ```
+
 ## :: 폴더 구조
 
 ```plaintext
@@ -27,7 +37,7 @@ npm run dev
 │   │     ├── PublicRoute
 │   │     ├── TextArea
 │   │     └── Todo
-│   ├── constants 
+│   ├── constants
 │   ├── contexts
 │   │     └── Auth
 │   ├── hooks
@@ -79,10 +89,9 @@ npm run dev
   - [x] 수정되는 Todo의 내용이 목록에서도 실시간으로 반영되어야 합니다
 
 ## 기타
+
 - Typescript를 사용하여 구현해주세요.
   - [x] strict 옵션을 적용하기.
   - [x] 보다 좁은 타입으로 정의하기.
 - React-Query를 적용하여 구현해주세요.
   - [x] 관심사에 따라 코드를 분리해주세요.
-
-
