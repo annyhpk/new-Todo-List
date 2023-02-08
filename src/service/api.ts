@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { SERVER_URL } from '../constants';
 import tokenStorage from '../utils/tokenStorage';
 
@@ -17,7 +17,7 @@ instance.interceptors.request.use(
     }
     return request;
   },
-  (error) => Promise.reject(error)
+  (error: AxiosError | Error) => Promise.reject(error)
 );
 
 instance.interceptors.response.use(
