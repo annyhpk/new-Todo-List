@@ -1,5 +1,8 @@
+import { ForwardedRef, forwardRef } from 'react';
 import useInput from '../../hooks/useInput';
 import { validationType } from '../../utils/validation';
+
+// Style
 import { StyledInput, ValidationAlert } from './styled';
 
 type Props = {
@@ -12,15 +15,18 @@ type Props = {
   msg?: string;
 };
 
-function Input({
-  name,
-  type,
-  validationType,
-  placeholder,
-  width = '19rem',
-  height = '1.2rem',
-  msg,
-}: Props) {
+function Input(
+  {
+    name,
+    type,
+    validationType,
+    placeholder,
+    width = '19rem',
+    height = '1.2rem',
+    msg,
+  }: Props,
+  ref?: ForwardedRef<HTMLInputElement>
+) {
   const [value, onChangeValue, isValidInput] = useInput<string>(
     '',
     validationType
@@ -29,6 +35,7 @@ function Input({
   return (
     <>
       <StyledInput
+        ref={ref}
         name={name}
         width={width}
         height={height}
@@ -43,4 +50,4 @@ function Input({
   );
 }
 
-export default Input;
+export default forwardRef<HTMLInputElement, Props>(Input);

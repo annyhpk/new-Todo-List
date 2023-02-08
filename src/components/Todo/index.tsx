@@ -23,7 +23,6 @@ export type Props = {
 };
 
 function Todo({ id, title, content }: Props) {
-  const formRef = useRef<HTMLFormElement>(null);
   const [modifyToggle, setModifyToggle] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const contentInputRef = useRef<HTMLInputElement>(null);
@@ -32,14 +31,13 @@ function Todo({ id, title, content }: Props) {
 
   const onClickUpdate = useCallback(() => {
     setModifyToggle((prev) => !prev);
-    if (!modifyToggle || !formRef.current) {
+    if (!modifyToggle || !titleInputRef.current || !contentInputRef.current) {
       return;
     }
 
-    const form = new FormData(formRef.current);
     const todoPayload = {
-      title: form.get('title') as string,
-      content: form.get('content') as string,
+      title: titleInputRef.current.value,
+      content: contentInputRef.current.value,
     };
 
     updateMutation.mutate({ id, todoPayload });
@@ -52,7 +50,7 @@ function Todo({ id, title, content }: Props) {
   return (
     <Wrapper>
       {modifyToggle ? (
-        <form ref={formRef}>
+        <form>
           <UpdateInput
             ref={titleInputRef}
             name="title"

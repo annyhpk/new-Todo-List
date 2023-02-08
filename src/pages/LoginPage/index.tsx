@@ -1,19 +1,22 @@
-import { FormEvent, useCallback, useEffect } from 'react';
+import { FormEvent, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Component
 import Form from '../../components/Form';
 import Input from '../../components/Input';
 
+// Context
 import useAuthContext from '../../contexts/Auth';
-import tokenStorage from '../../utils/tokenStorage';
 
 // API
 import UserAPI from '../../service/User';
 
 // style
-import { StyledLink, Label } from './styled';
+import { Label, StyledLink } from './styled';
 
 function LoginPage() {
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
   const { isAuthenticated, actions } = useAuthContext();
   const navigate = useNavigate();
 
@@ -21,22 +24,17 @@ function LoginPage() {
     if (isAuthenticated) navigate('/');
   }, [isAuthenticated]);
 
-  const onSubmitForm = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+  const onSubmitForm = useCallback((e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const loginForm = {
-      email: form.get('email') as string,
-      password: form.get('password') as string,
-    };
+    if (!emailInputRef.current || !passwordInputRef.current) return;
 
-    try {
-      const res = await UserAPI.login(loginForm);
-      tokenStorage.setToken(res.data.token);
+    UserAPI.login({
+      email: emailInputRef.current.value,
+      password: passwordInputRef.current.value,
+    }).then(() => {
       actions.login();
       navigate('/');
-    } catch (error) {
-      throw new Error(`${error}`);
-    }
+    });
   }, []);
 
   return (
@@ -44,6 +42,7 @@ function LoginPage() {
       <Form title="로그인" submitButton="로그인" onSubmitForm={onSubmitForm}>
         <Label htmlFor="email">아이디(email)</Label>
         <Input
+          ref={emailInputRef}
           name="email"
           type="email"
           validationType="email"
@@ -52,6 +51,7 @@ function LoginPage() {
         />
         <Label htmlFor="password">패스워드(password)</Label>
         <Input
+          ref={passwordInputRef}
           name="password"
           type="password"
           validationType="password"

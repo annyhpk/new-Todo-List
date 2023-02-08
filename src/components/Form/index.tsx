@@ -1,9 +1,9 @@
 import { FormEvent, ReactNode, useCallback, useState } from 'react';
-import { StyledFrom, FormWrapper, Button } from './styled';
+import { Button, FormWrapper, StyledFrom } from './styled';
 
 type Props = {
   children: ReactNode;
-  onSubmitForm: (e: FormEvent<HTMLFormElement>) => Promise<void>;
+  onSubmitForm: (e: FormEvent<HTMLFormElement>) => void;
   title: string;
   submitButton: string;
 };
