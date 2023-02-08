@@ -1,8 +1,9 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-// main
+// component
 import GlobalNavBar from './components/GlobalNavBar';
+import Loading from './components/Loading';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
 import MainPage from './pages/MainPage';
@@ -21,25 +22,31 @@ function App() {
         <Route
           path="/login"
           element={
-            <PublicRoute>
-              <LoginPage />
-            </PublicRoute>
+            <Suspense fallback={<Loading />}>
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            </Suspense>
           }
         />
         <Route
           path="/signup"
           element={
-            <PublicRoute>
-              <SignUpPage />
-            </PublicRoute>
+            <Suspense fallback={<Loading />}>
+              <PublicRoute>
+                <SignUpPage />
+              </PublicRoute>
+            </Suspense>
           }
         />
         <Route
           path="/todo"
           element={
-            <PrivateRoute>
-              <TodoPage />
-            </PrivateRoute>
+            <Suspense fallback={<Loading />}>
+              <PrivateRoute>
+                <TodoPage />
+              </PrivateRoute>
+            </Suspense>
           }
         />
       </Routes>

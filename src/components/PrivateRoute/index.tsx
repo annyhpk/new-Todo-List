@@ -1,7 +1,4 @@
-import { Suspense } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-
-import Loading from '../../components/Loading';
 
 // Auth Context
 import useAuthContext from '../../contexts/Auth';
@@ -16,7 +13,7 @@ const PrivateRoute = ({ children }: Props) => {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  return <Suspense fallback={<Loading />}>{children}</Suspense>;
+  return children;
 };
 
 export default PrivateRoute;
