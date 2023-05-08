@@ -17,13 +17,15 @@ const useInput = <T>(
       const newValue = Number.isNaN(tmp) ? event.target.value : tmp;
       setValue(newValue as T);
     },
-    []
+    [setValue]
   );
 
-  const isValidInput = useMemo(
-    () => Validation(validType, String(value)),
-    [validType, value]
-  );
+  const isValidInput = useMemo(() => {
+    if (typeof value === 'string') {
+      return Validation(validType, value.toString());
+    }
+    return true;
+  }, [validType, value]);
 
   return [value, onChange, isValidInput];
 };
