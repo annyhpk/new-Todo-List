@@ -1,50 +1,57 @@
-import { FormEvent, useCallback, useRef } from 'react';
+import { FormEvent, useRef } from 'react';
 
 // component
-import Input from '../../components/Input';
-import TextArea from '../../components/TextArea';
-import Todo, { Props } from '../../components/Todo';
+import TodoItem, { Todo } from '../../components/TodoItem';
 
 // hooks
 import useCreateTodo from '../../hooks/mutations/useCreateTodo';
 import useGetTodos from '../../hooks/queries/useGetTodos';
 
 // style
-import { TodoBox, TodoContainer, TodoForm } from './styled';
+import {
+  StyledInput,
+  StyledTextArea,
+  TodoBox,
+  TodoContainer,
+  TodoForm,
+} from '../styled';
 
 function TodoPage() {
-  const todoInputRef = useRef<HTMLInputElement>(null);
-  const contentInputRef = useRef<HTMLTextAreaElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
   const { isLoading, data } = useGetTodos();
   const createMutation = useCreateTodo();
 
-  const onSubmitTodo = useCallback((e: FormEvent<HTMLFormElement>) => {
+  const onSubmitTodo = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!todoInputRef.current || !contentInputRef.current) return;
+    if (!titleRef.current || !contentRef.current) return;
 
     createMutation.mutate({
-      title: todoInputRef.current.value,
-      content: contentInputRef.current.value,
+      title: titleRef.current.value,
+      content: contentRef.current.value,
     });
 
-    if (createMutation.isSuccess) {
-      todoInputRef.current.value = '';
-      contentInputRef.current.value = '';
-    }
-  }, []);
+    titleRef.current.value = '';
+    contentRef.current.value = '';
+  };
 
   return (
     <main>
       <TodoContainer>
         <h3>할 일 쓰기</h3>
         <TodoForm onSubmit={onSubmitTodo}>
-          <Input
-            ref={todoInputRef}
+          <StyledInput
+            ref={titleRef}
             name="title"
             type="text"
             placeholder="제목"
           />
-          <TextArea ref={contentInputRef} name="content" placeholder="내용" />
+          <StyledTextArea
+            ref={contentRef}
+            name="content"
+            placeholder="TODO 내용"
+            autoComplete="off"
+          />
           <button type="submit">글 쓰기</button>
         </TodoForm>
         <h3>할 일 목록</h3>
@@ -53,9 +60,9 @@ function TodoPage() {
             <p>로딩중...</p>
           ) : (
             data
-              .map((todoInfo: Props) => (
+              ?.map((todoInfo: Todo) => (
                 <div key={todoInfo.id}>
-                  <Todo {...todoInfo} />
+                  <TodoItem {...todoInfo} />
                   <hr />
                 </div>
               ))
