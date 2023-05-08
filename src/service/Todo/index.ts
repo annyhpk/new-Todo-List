@@ -1,24 +1,25 @@
+import { Todo } from '../../components/TodoItem';
 import api from '../api';
 
-export type TodoPayload = {
+export type Payload = {
   title: string;
   content: string;
 };
 
 export default class TodoAPI {
-  static getTodos() {
+  static getTodos(): Promise<Todo[]> {
     return api
       .get('/todos')
-      .then((response) => response.data?.data)
+      .then((response) => response.data?.data as Todo[])
       .catch((error) => {
         throw new Error(`Getting todos failed: ${error}`);
       });
   }
 
-  static createTodo(todoPayload: TodoPayload) {
+  static createTodo(payload: Payload): Promise<Todo> {
     return api
-      .post('/todos', todoPayload)
-      .then((response) => response.data?.data)
+      .post('/todos', payload)
+      .then((response) => response.data?.data as Todo)
       .catch((error) => {
         throw new Error(`Creating todos failed: ${error}`);
       });
@@ -26,20 +27,20 @@ export default class TodoAPI {
 
   static updateTodo({
     id,
-    todoPayload,
+    payload,
   }: {
     id: string;
-    todoPayload: TodoPayload;
-  }) {
+    payload: Payload;
+  }): Promise<Todo> {
     return api
-      .put(`/todos/${id}`, todoPayload)
-      .then((response) => response.data?.data)
+      .put(`/todos/${id}`, payload)
+      .then((response) => response.data?.data as Todo)
       .catch((error) => {
         throw new Error(`Updating todos failed: ${error}`);
       });
   }
 
-  static deleteTodo(id: string) {
+  static deleteTodo(id: string): Promise<void> {
     return api
       .delete(`/todos/${id}`)
       .then((response) => response.data?.data)
